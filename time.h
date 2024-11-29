@@ -25,6 +25,13 @@ public:
     void setHours(uint32_t h);
     void setMinutes(uint32_t m);
 
+    bool operator==(const Time& other) const;
+    bool operator!=(const Time& other) const;
+    bool operator<(const Time& other) const;
+    bool operator<=(const Time& other) const;
+    bool operator>(const Time& other) const;
+    bool operator>=(const Time& other) const;
+
 };
 
 #endif // TIME_H
