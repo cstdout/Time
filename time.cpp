@@ -1,91 +1,75 @@
-// Online C compiler to run C program online
-#include <iostream>
-#include <string>
-#include <cstdint>
-using namespace std;
+#include "time.h"
 
-class Time {
-    uint64_t _seconds;
-    public:
-        static const uint64_t DAY_SEC = 86400;
-        static const uint64_t HOURS_SEC = 3600;
-        static const uint64_t MINUTES_SEC = 60;
-     
-        
-        Time(uint64_t seconds = 0) {
-            _seconds = seconds;
-        }
-        Time(Time& t) {
-            //
-        }
-        Time(int32_t hours = 0,
-                   int32_t minutes = 0,
-                   int32_t seconds = 0) {
-            _seconds = HOURS_SEC * hours + MINUTES_SEC * minutes + seconds;
-    
-        }
-        
-        
-        void setSeconds(int32_t s) {
-            uint64_t t =  _seconds - (_seconds % MINUTES_SEC);
-            _seconds = t + s;
-        }
-        void setMinutes(int32_t m) {
-             uint64_t t =  _seconds - (_seconds % HOURS_SEC);
-            _seconds = t + MINUTES_SEC * m;
-        }
-        void setHours(int32_t h) {
-            uint64_t t =  _seconds - (_seconds % DAY_SEC);
-            _seconds = t + HOURS_SEC * h;
-        }
-        uint32_t getHours() const {
-            return _seconds % DAY_SEC;
-        }
-        uint32_t getMinutes() const {
-            return _seconds % HOURS_SEC;
-        }
-        uint32_t getSeconds() const {
-            return _seconds % MINUTES_SEC;
-        }
-        uint64_t getTotalSeconds() const {
-            return _seconds;
-        }
+Time::Time()
+{
 
-        string& getMinutesStr() const {
-            int32_t m = getMinutes();
-            string* mStr = new string(to_string(m));
-            (*mStr) += ((m < 10 ? string("0") : string("")) + (*mStr));
-            return *mStr;
-        }
-        string& getHoursStr() const {
-            int32_t h = getHours();
-            cout << h << endl;
-            string* hStr = new string(to_string(h));
-            (*hStr) += ((h < 10 ? string("0") : string("")) + (*hStr));
-            return *hStr;
-        }
-    
-        string& toString(bool military = true) {
-            string* res = new string("");
-            if (military) {
-                (*res) += getHoursStr() + string(":") + getMinutesStr();
-            }
-            else {
-                //    
-            }
-            return *res;
-            
-        }
-    
-    
-};
-
-
-
-int main() {
-    Time t(12, 30);
-    
-    cout << t.toString();
-
-    return 0;
 }
+Time::Time(uint64_t s)
+{
+    _seconds = s;
+}
+Time::Time(uint32_t hours, uint32_t minutes, uint32_t seconds)
+{
+    _seconds = ((hours % 24) * HOURS_SEC)  + ((minutes % 60) * MINUTES_SEC) + (seconds % 60);
+}
+Time::Time(const Time& t)
+{
+    setTotalSeconds(t.getTotalSeconds());
+}
+uint64_t Time::getTotalSeconds() const
+{
+    return _seconds;
+}
+uint64_t Time::getSeconds() const
+{
+    return _seconds % 60;
+}
+uint64_t Time::getMinutes() const
+{
+    return (_seconds / MINUTES_SEC) % MINUTES_SEC;
+}
+uint64_t Time::getHours() const
+{
+    return (_seconds / HOURS_SEC) % MINUTES_SEC;
+}
+void Time::setTotalSeconds(uint64_t s)
+{
+    _seconds = s;
+}
+
+void Time::setSeconds(uint32_t s)
+{
+    uint64_t currentSeconds = getSeconds();
+    uint64_t t = _seconds;
+    if (currentSeconds > 0)
+    {
+        t -= currentSeconds;
+    }
+
+    t += (s % 60);
+    _seconds = t;
+}
+void Time::setHours(uint32_t h)
+{
+    uint64_t currentHours = getHours();
+    uint64_t t = _seconds;
+    if (currentHours > 0)
+    {
+        t -= currentHours * HOURS_SEC;
+    }
+    t += (HOURS_SEC * (h % 24));
+    _seconds = t;
+}
+void Time::setMinutes(uint32_t m)
+{
+    uint64_t currentMinutes = getMinutes();
+    uint64_t t = _seconds;
+    if (currentMinutes > 0)
+    {
+        t -= currentMinutes * MINUTES_SEC;
+    }
+
+    t += (MINUTES_SEC * (m % 60));
+    _seconds = t;
+}
+
