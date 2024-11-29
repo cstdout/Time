@@ -72,4 +72,28 @@ void Time::setMinutes(uint32_t m)
     t += (MINUTES_SEC * (m % 60));
     _seconds = t;
 }
+bool Time::operator==(const Time& other) const
+{
+    return _seconds == other.getTotalSeconds();
+}
+bool Time::operator!=(const Time& other) const
+{
+    return _seconds != other.getTotalSeconds();
+}
+bool Time::operator<(const Time& other) const
+{
+    return _seconds < other.getTotalSeconds();
+}
+bool Time::operator<=(const Time& other) const
+{
+    return _seconds <= other.getTotalSeconds();
+}
+bool Time::operator>(const Time& other) const
+{
+    return _seconds > other.getTotalSeconds();
+}
+bool Time::operator>=(const Time& other) const
+{
+    return _seconds >= other.getTotalSeconds();
+}
 
