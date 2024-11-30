@@ -125,7 +125,7 @@ Time& Time::operator-=(const Time& other)
     if(_seconds < s)
     {
         uint64_t t = s - _seconds;
-        _seconds = MAX_VAL_SEC - t;
+        _seconds = MAX_TIME_VAL_SEC - t;
     }
     else
     {
@@ -198,7 +198,7 @@ Time& Time::operator--()
 {
     if (!_seconds)
     {
-        _seconds = MAX_VAL_SEC - 1;
+        _seconds = MAX_TIME_VAL_SEC - 1;
     }
     else
     {
