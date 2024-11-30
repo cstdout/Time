@@ -9,8 +9,6 @@ class DateTime : public Time
     static uint64_t secondsPassedFromNewYearToMonth(uint64_t month, bool leapYear = false);
 
 public:
-    static const uint64_t YEAR_SEC = 31536000;
-    static const uint64_t MONTH_SEC = 2592000;
     static const uint64_t DAY_SEC = 86400;
     DateTime();
     DateTime(const DateTime& d);
