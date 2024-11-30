@@ -26,11 +26,11 @@ uint64_t Time::getSeconds() const
 }
 uint64_t Time::getMinutes() const
 {
-    return (_seconds / MINUTES_SEC) % MINUTES_SEC;
+    return (_seconds / MINUTES_SEC) % 60;
 }
 uint64_t Time::getHours() const
 {
-    return (_seconds / HOURS_SEC) % MINUTES_SEC;
+    return (_seconds / HOURS_SEC) % 24;
 }
 void Time::setTotalSeconds(uint64_t s)
 {
@@ -72,6 +72,10 @@ void Time::setMinutes(uint32_t m)
     t += (MINUTES_SEC * (m % 60));
     _seconds = t;
 }
+bool Time::militaryOutputModeOn() const
+{
+    return militaryOutputMode;
+}
 bool Time::operator==(const Time& other) const
 {
     return _seconds == other.getTotalSeconds();
@@ -95,5 +99,117 @@ bool Time::operator>(const Time& other) const
 bool Time::operator>=(const Time& other) const
 {
     return _seconds >= other.getTotalSeconds();
+}
+void Time::setMilitaryOutputMode(bool flag)
+{
+    militaryOutputMode = flag;
+}
+Time& Time::operator+(const Time& other) const
+{
+    return *(new Time(_seconds + other.getTotalSeconds()));
+}
+Time& Time::operator-(const Time& other) const
+{
+    Time* t = new Time(_seconds);
+    t->operator-=(other);
+    return *t;
+}
+Time& Time::operator+=(const Time& other)
+{
+    _seconds += other.getTotalSeconds();
+    return *this;
+}
+Time& Time::operator-=(const Time& other)
+{
+    uint64_t s = other.getTotalSeconds();
+    if(_seconds < s)
+    {
+        uint64_t t = s - _seconds;
+        _seconds = MAX_VAL_SEC - t;
+    }
+    else
+    {
+        _seconds -= s;
+    }
+    return *this;
+}
+std::string& Time::hoursString(bool military) const
+{
+    uint64_t h = getHours();
+    if (!military)
+    {
+        h %= 12;
+        if(!h)
+        {
+            h = 12;
+        }
+    }
+    return *(new std::string((h < 10 ? "0" : "") + std::to_string(h)));
+}
+std::string& Time::minutesString() const
+{
+    uint64_t m = getMinutes();
+    return *(new std::string((m < 10 ? "0" : "") + std::to_string(m)));
+}
+std::string& Time::secondsString() const
+{
+    uint64_t s = getSeconds();
+    return *(new std::string((s < 10 ? "0" : "") + std::to_string(s)));
+}
+std::string& Time::getString(bool military) const
+{
+    std::string* res = new std::string("");
+    res->operator+=(hoursString(military) + std::string(":") + minutesString() + std::string(":") + secondsString());
+    if(!military)
+    {
+        uint64_t h = getHours();
+        bool amRes = (h < 12);
+        res->operator+=(amRes ? " am": " pm");
+    }
+    return *res;
+}
+std::ostream& operator<<(std::ostream& out, const Time& t)
+{
+    out << t.getString(t.militaryOutputMode);
+    return out;
+}
+std::istream& operator>>(std::istream& in, Time& t)
+{
+    uint32_t h, m, s;
+    in >> h >> m >> s;
+    t.setHours(h);
+    t.setMinutes(m);
+    t.setSeconds(s);
+    return in;
+}
+Time& Time::operator++()
+{
+    ++_seconds;
+    return *this;
+}
+Time& Time::operator++(int)
+{
+    Time* t = new Time(getTotalSeconds());
+    this->operator++();
+    return *t;
+}
+
+Time& Time::operator--()
+{
+    if (!_seconds)
+    {
+        _seconds = MAX_VAL_SEC - 1;
+    }
+    else
+    {
+        --_seconds;
+    }
+    return *this;
+}
+Time& Time::operator--(int)
+{
+    Time* t = new Time(getTotalSeconds());
+    this->operator--();
+    return *t;
 }
 
