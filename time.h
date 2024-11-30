@@ -5,13 +5,14 @@
 #include <iostream>
 class Time
 {
-    uint64_t _seconds = 0;
+private:
     bool militaryOutputMode = true;
-
+protected:
+    uint64_t _seconds = 0;
 public:
     static const uint32_t MINUTES_SEC = 60;
     static const uint32_t HOURS_SEC = 3600;
-    static const uint32_t MAX_VAL_SEC = 24 * HOURS_SEC;
+    static const uint32_t MAX_TIME_VAL_SEC = 24 * HOURS_SEC;
     Time();
     Time(uint64_t s);
     Time(uint32_t hours, uint32_t minutes = 0, uint32_t seconds = 0);
